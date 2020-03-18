@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        {% block head_title %}theZoo{% endblock %} | theZoo - The Zoo Management System
+    </title>
+    {% include 'components/meta-tags.html' %}
+    {% include 'components/styles.html' %}
+    {% include 'components/head-scripts.html' %}
+</head>
+
+<body class="app sidebar-mini rtl">
+
+    {% include 'components/navbar.html' %}
+
+    {% include 'components/sidebar.html' %}
+
+    <main class="app-content">
+        <div class="app-title">
+            <div>
+                <h1>
+                    <i class="fa fa-dashboard"></i>
+                    {% block page_title %}Dashboard{% endblock %}
+                </h1>
+            </div>
+            <ul class="app-breadcrumb breadcrumb">
+                <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+                <li class="breadcrumb-item">
+                    <a href="#">
+                    {% block breadcrumb %}Dashboard{% endblock %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        {% include 'snippets/messages.html' %}
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+    {% include 'components/scripts.html' %}
+</body>
+
+</html>
