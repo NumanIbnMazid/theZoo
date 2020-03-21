@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block head_title %}{% block page_title %}
+Staff List
+{% endblock %}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table id="DataTable" class="cell-border hover table-bordered table-hover text-center" style="width:100%">
+                <thead>
+                    <tr class="text-muted">
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>DOB</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Posting</th>
+                        <th>Insurance Cover</th>
+                        <th>Image</th>
+                        {% if request.user.is_superuser %}
+                        <th>Action</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr class="text-dark">
+                        <th scope="row">{{ forloop.counter }}</th>
+
+                        <td>
+                            {{ object.user.username }}
+                        </td>
+
+                        <td>
+                            {{ object.user.email }}
+                        </td>
+
+                        <td>
+                            {{ object.role }}
+                        </td>
+
+                        <td>
+                            {{ object.get_name }}
+                        </td>
+                        
+                        <td>
+                            {% if object.gender %}
+                            {{ object.gender }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            {% if object.dob %}
+                            {{ object.dob }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            {% if object.address %}
+                            {{ object.address }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            {% if object.phone %}
+                            {{ object.phone }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            {% if object.posting %}
+                            {{ object.posting }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            {% if object.insurance_cover %}
+                            {{ object.insurance_cover }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        
+                        <td>
+                            {% if object.image %}
+                            <img src="{{ object.image.url }}" style="height: 50px; width: 50px;"
+                            alt="{{object.user.username}}">
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+
+                        {% if request.user.is_superuser %}
+                        <td>
+                            <a href="{% url 'staff:update_staff_admin' id=object.id %}"
+                                class="btn btn-primary btn-sm text-deco-none">
+                                <span class="">
+                                    Edit
+                                </span>
+                            </a>
+                            <button type="button"
+                                class="btn btn-danger btn-sm text-deco-none bg-c-danger m-1 js_delete_{{namespace}}"
+                                value="{{object.id}}" data-toggle="modal" data-target="#modal-delete-{{namespace}}">
+                                Delete
+                            </button>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="text-center">
+                            <div class="alert alert-warning">
+                                No item found!
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="text-center text-muted">
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>DOB</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Posting</th>
+                        <th>Insurance Cover</th>
+                        <th>Image</th>
+                        {% if request.user.is_superuser %}
+                        <th>Action</th>
+                        {% endif %}
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% include 'snippets/delete-modal.html' %}
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        $('#DataTable').DataTable({
+            destroy: true,
+            "ordering": false,
+            "scrollCollapse": true,
+            "stateSave": true,
+            "pagingType": "full_numbers",
+        });
+    });
+</script>
+{% endblock %}

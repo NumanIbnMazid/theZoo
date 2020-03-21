@@ -7,6 +7,7 @@
     </title>
     {% include 'components/meta-tags.html' %}
     {% include 'components/styles.html' %}
+    {% block extra_css %}{% endblock %}
     {% include 'components/head-scripts.html' %}
 </head>
 
@@ -40,7 +41,12 @@
 
     </main>
 
+    {% include 'snippets/logout-modal.html' %}
+
     {% include 'components/scripts.html' %}
+
+    {% block extra_js %}{% endblock %}
+
 </body>
 
 </html>

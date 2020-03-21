@@ -1,4 +1,5 @@
 import os
+import time
 
 
 
@@ -17,6 +18,6 @@ def upload_image_path(instance, filename):
     final_filename = '{new_filename}{ext}'.format(
         new_filename=new_filename, ext=ext)
     return "Staffs/{user}/Profile-Picture/{final_filename}".format(
-        user=instance.name,
+        user=instance.user.username,
         final_filename=final_filename
     )

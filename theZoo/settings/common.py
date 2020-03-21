@@ -135,8 +135,25 @@ ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = 'theZoo'
 ACCOUNT_USERNAME_BLACKLIST = ['robot', 'hacker', 'virus', 'spam']
 ACCOUNT_ADAPTER = 'theZoo.adapter.UsernameMaxAdapter'
-ACCOUNT_FORMS = {
-    'signup': 'theZoo.forms.CustomSignupForm',
-}
+# ACCOUNT_FORMS = {
+#     'signup': 'theZoo.forms.CustomSignupForm',
+# }
 # AUTH_USER_MODEL = 'theZoo.accounts.models.UserProfile'
 # ACCOUNT_SIGNUP_FORM_CLASS = 'theZoo.forms.CustomSignupForm'
+
+
+# File Staffs
+ALLOWED_IMAGE_TYPES = ['.jpg', '.jpeg', '.png']
+ALLOWED_DOCUMENT_TYPES = ['.doc', '.docx', '.pdf']
+ALLOWED_FILE_TYPES = ['.jpg', '.jpeg', '.png', '.pdf', '.doc', '.docx']
+# 1.5MB - 1621440
+# 2.5MB - 2621440
+# 5MB - 5242880
+# 10MB - 10485760
+# 20MB - 20971520
+# 50MB - 5242880
+# 100MB 104857600
+# 250MB - 214958080
+# 500MB - 429916160
+MAX_IMAGE_UPLOAD_SIZE = 1621440
+MAX_UPLOAD_SIZE = 1621440

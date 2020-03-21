@@ -1,79 +1,30 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
+    <title>
+        {% block head_title %}theZoo{% endblock %} | theZoo - The Zoo Management System
+    </title>
     {% include 'components/meta-tags.html' %}
-
-    <title>{% block head_title %}Django Allauth - Dashboard{% endblock %} | @ Numan Ibn Mazid</title>
-
     {% include 'components/styles.html' %}
-    {% block extra_css %}{% endblock %}
-    {% include "components/head-scripts.html" %}
-    {% block extra_head_js %}{% endblock %}
-
+    {% include 'components/head-scripts.html' %}
 </head>
 
-<body id="page-top">
+<body class="app sidebar-mini rtl">
 
-    <!-- Page Wrapper -->
-    <div id="wrapper">
+    {% include 'components/navbar.html' %}
 
-        <!-- Sidebar -->
-        {% include 'components/sidebar.html' %}
-        <!-- End of Sidebar -->
+    <main class="app-content">
 
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
+        {% include 'snippets/messages.html' %}
 
-            <!-- Main Content -->
-            <div id="content">
+        {% block content %}{% endblock %}
 
-                <!-- Topbar -->
-                {% include 'components/navbar.html' %}
-                <!-- End of Topbar -->
-
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">
-                            {% block page_title %}Dashboard{% endblock %}
-                        </h1>
-                    </div>
-
-                    {% include 'snippets/messages.html' %}
-
-                    <div class="card">
-                        <div class="card-body">
-
-                            {% block content %}{% endblock %}
-
-                        </div>
-                    </div>
-
-                </div>
-                <!-- /.container-fluid -->
-
-            </div>
-            <!-- End of Main Content -->
-
-            {% include 'components/footer.html' %}
-
-        </div>
-    </div>
-    <!-- End of Page Wrapper -->
-
-    {% include 'snippets/scroll-top.html' %}
+    </main>
 
     {% include 'snippets/logout-modal.html' %}
 
     {% include 'components/scripts.html' %}
-
-    {% block extra_js %}{% endblock %}
 
 </body>
 

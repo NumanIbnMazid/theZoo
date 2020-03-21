@@ -121,9 +121,10 @@ def validate_chars(field_data, allowed_chars=None, max_length=50):
 def simple_form_widget(self=None, field=None, maxlength=50, step=None, pattern=None, placeholder=None):
     field_name = ' '.join(field.split('_')).title()
     allowed_chars = pattern
-    characters_to_remove = '^[]{1,}$'
-    for character in characters_to_remove:
-        allowed_chars = allowed_chars.replace(character, "")
+    if not pattern == None:
+        characters_to_remove = '^[]{1,}$'
+        for character in characters_to_remove:
+            allowed_chars = allowed_chars.replace(character, "")
     if not placeholder == None:
         placeholder = placeholder
     else:

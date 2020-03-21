@@ -1,15 +1,39 @@
 from django.db import models
 from .utils import upload_image_path
 from django.conf import settings
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
+from middlewares.middlewares import RequestMiddleware
 
 
 
 class Staff(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user_staff', verbose_name='User'
+    # STAFF_ROLE_CHOICES
+    HIGH_LEVEL = 'High Level'
+    MID_LEVEL = 'Mid Level'
+    LOW_LEVEL = 'Low Level'
+    STAFF_ROLE_CHOICES = (
+        (HIGH_LEVEL, 'High Level'),
+        (MID_LEVEL, 'Mid Level'),
+        (LOW_LEVEL, 'Low Level'),
     )
-    name = models.CharField(
-        max_length=100, verbose_name='Name'
+    # GENDER_CHOICES
+    MALE = 'Male'
+    FEMALE = 'Female'
+    OTHERS = 'Others'
+    GENDER_CHOICES = (
+        (MALE, 'Male'),
+        (FEMALE, 'Female'),
+        (OTHERS, 'Others'),
+    )
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, unique=True, on_delete=models.CASCADE, related_name='user_staff', verbose_name='User'
+    )
+    role = models.CharField(
+        max_length=100, choices=STAFF_ROLE_CHOICES, default='Low Level', verbose_name='Role'
+    )
+    gender = models.CharField(
+        choices=GENDER_CHOICES, blank=True, null=True, max_length=10, verbose_name='gender'
     )
     dob = models.DateField(
         verbose_name='DOB', null=True, blank=True
@@ -18,10 +42,10 @@ class Staff(models.Model):
         max_length=255, verbose_name='Address', null=True, blank=True
     )
     phone = models.CharField(
-        max_length=30, verbose_name='Phone'
+        max_length=30, verbose_name='Phone', null=True, blank=True
     )
     posting = models.CharField(
-        max_length=100, verbose_name='Posting'
+        max_length=100, verbose_name='Posting', null=True, blank=True
     )
     insurance_cover = models.IntegerField(
         verbose_name='Insurance Cover', null=True, blank=True
@@ -37,9 +61,62 @@ class Staff(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.user.username
+
+    def get_username(self):
+        return self.user.username
+
+    def get_name(self):
+        name = None
+        if self.user.first_name or self.user.last_name:
+            name = self.user.get_full_name()
+        else:
+            name = self.user.username
+        return name
+
+    def get_smallname(self):
+        if self.user.first_name or self.user.last_name:
+            name = self.user.get_short_name()
+        else:
+            name = self.user.username
+        return name
+
+    def get_dynamic_name(self):
+        if len(self.get_username()) < 13:
+            name = self.get_username()
+        else:
+            name = self.get_smallname()
+        return name
+
+    def get_fields(self):
+        def get_dynamic_fields(field):
+            if field.name == 'x':
+                return (field.name, self.x.title)
+            else:
+                value = "-"
+                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+                    value = field.value_from_object(self)
+                return (field.name, value)
+        return [get_dynamic_fields(field) for field in self.__class__._meta.fields]
 
     class Meta:
         verbose_name = 'Staff'
         verbose_name_plural = 'Staffs'
         ordering = ['-created_at']
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_or_update_user_staff(sender, instance, created, **kwargs):
+    if created:
+        try:
+            request = RequestMiddleware(get_response=None)
+            request = request.thread_local.current_request
+            role = request.POST.get("role")
+            Staff.objects.create(
+                user=instance, role=role,
+            )
+        except:
+            Staff.objects.create(
+                user=instance
+            )
+    instance.user_staff.save()

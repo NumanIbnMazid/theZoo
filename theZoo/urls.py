@@ -10,6 +10,9 @@ from .views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', HomeView.as_view(), name='home'),
+    path('account/', include('accounts.urls')),
+    path('staff/', include(('staff.urls', 'staff'), namespace='staff')),
+    path('maintenance/', include(('maintenance.urls', 'maintenance'), namespace='maintenance')),
 ]
 
 

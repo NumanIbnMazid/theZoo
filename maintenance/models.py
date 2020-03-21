@@ -22,6 +22,17 @@ class Equipment(models.Model):
     def __str__(self):
         return self.name
 
+    def get_fields(self):
+        def get_dynamic_fields(field):
+            if field.name == 'x':
+                return (field.name, self.x.title)
+            else:
+                value = "-"
+                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+                    value = field.value_from_object(self)
+                return (field.name, value)
+        return [get_dynamic_fields(field) for field in self.__class__._meta.fields]
+
     class Meta:
         verbose_name = 'Equipment'
         verbose_name_plural = 'Equipments'
