@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from staff.models import Staff
+from util.helpers import get_dynamic_fields
 
 
 
@@ -23,15 +24,7 @@ class Equipment(models.Model):
         return self.name
 
     def get_fields(self):
-        def get_dynamic_fields(field):
-            if field.name == 'x':
-                return (field.name, self.x.title)
-            else:
-                value = "-"
-                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
-                    value = field.value_from_object(self)
-                return (field.name, value)
-        return [get_dynamic_fields(field) for field in self.__class__._meta.fields]
+        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
 
     class Meta:
         verbose_name = 'Equipment'
@@ -43,8 +36,8 @@ class EquipmentSet(models.Model):
     name = models.CharField(
         max_length=100, verbose_name='Name'
     )
-    equipments = models.CharField(
-        max_length=255, verbose_name='Equipments'
+    equipments = models.ManyToManyField(
+        Equipment, related_name='equipment_set_equipment', verbose_name='Equipments'
     )
     description = models.TextField(
         max_length=500, null=True, blank=True, verbose_name='Description'
@@ -64,6 +57,25 @@ class EquipmentSet(models.Model):
         verbose_name_plural = 'Equipment Sets'
         ordering = ['-created_at']
 
+
+    def get_fields(self):
+        def get_dynamic_fields(field):
+            if field.name == 'equipments':
+                if field.get_internal_type() == 'ManyToManyField':
+                    value = ','.join([str(elem)
+                                      for elem in self.equipments.all()])
+                else:
+                    value = self.equipments.name
+                return (field.name, value)
+            elif field.name == 'x':
+                return (field.name, self.x.title)
+            else:
+                value = "-"
+                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+                    value = field.value_from_object(self)
+                return (field.name, value)
+        return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
+    
 
 
 class Cage(models.Model):
@@ -110,6 +122,9 @@ class Cage(models.Model):
         verbose_name_plural = 'Cages'
         ordering = ['-created_at']
 
+    def get_fields(self):
+        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
+
 
 class Maintenance(models.Model):
     staff = models.ForeignKey(
@@ -145,6 +160,9 @@ class Maintenance(models.Model):
         verbose_name_plural = 'Maintenances'
         ordering = ['-created_at']
 
+    def get_fields(self):
+        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
+
 
 class Incident(models.Model):
     title = models.CharField(
@@ -176,3 +194,6 @@ class Incident(models.Model):
         verbose_name = 'Incident'
         verbose_name_plural = 'Incidents'
         ordering = ['-created_at']
+
+    def get_fields(self):
+        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]

@@ -3,59 +3,94 @@
 <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
 <aside class="app-sidebar">
 	<div class="app-sidebar__user">
-		<img class="app-sidebar__user-avatar" style="width: 50px; height: 50px;"
-	{% if request.user.user_staff.image %} src="{{ request.user.user_staff.image.url }}" {% else %}
-	src="{% static 'images/icon/avatar.png' %}" {% endif %} alt="{{ request.user.username }}">
-	<div>
-		<p class="app-sidebar__user-name">
-			{{ request.user.user_staff.get_name }}
-		</p>
-		<p class="app-sidebar__user-designation">
-			{{ request.user.user_staff.role }}
-		</p>
+		<img class="app-sidebar__user-avatar" style="width: 50px; height: 50px;" {% if request.user.user_staff.image %}
+			src="{{ request.user.user_staff.image.url }}" {% else %} src="{% static 'images/icon/avatar.png' %}"
+			{% endif %} alt="{{ request.user.username }}">
+		<div>
+			<p class="app-sidebar__user-name">
+				{{ request.user.user_staff.get_name }}
+			</p>
+			<p class="app-sidebar__user-designation">
+				{{ request.user.user_staff.role }}
+			</p>
+		</div>
 	</div>
-</div>
-<ul class="app-menu">
-	<li>
-		<a class="app-menu__item active" href="{{ home_url }}">
-			<i class="app-menu__icon fa fa-laptop"></i>
-			<span class="app-menu__label">
-				Dashboard
-			</span>
-		</a>
-	</li>
-	<li class="treeview">
-		<a class="app-menu__item" href="#" data-toggle="treeview">
-			<i class="app-menu__icon fa fa-user"></i>
-			<span class="app-menu__label">
-				Staff
-			</span>
-			<i class="treeview-indicator fa fa-angle-right"></i>
-		</a>
-		<ul class="treeview-menu">
-			{% if request.user.is_superuser %}
-			<li>
-				<a class="treeview-item" href="{% url 'staff:add_staff' %}">
-					<i class="icon fa fa-plus"></i>
-					Add Staff
-				</a>
-			</li>
-			{% endif %}
-			<li>
-				<a class="treeview-item" href="{% url 'staff:list_staff' %}">
-					<i class="icon fa fa-plus"></i>
-					View Staffs
-				</a>
-			</li>
-		</ul>
-	</li>
-	<li>
-		<a class="app-menu__item active" href="{% url 'maintenance:add_equipment' %}">
-			<i class="icon fa fa-plus"></i>
-			<span class="app-menu__label">
-				Add Equipment
-			</span>
-		</a>
-	</li>
-</ul>
+	<ul class="app-menu">
+		<li>
+			<a class="app-menu__item" href="{% url 'home' %}">
+				<i class="app-menu__icon fa fa-laptop"></i>
+				<span class="app-menu__label">
+					Dashboard
+				</span>
+			</a>
+		</li>
+		<li class="treeview">
+			<a class="app-menu__item" href="#" data-toggle="treeview">
+				<i class="app-menu__icon fa fa-user"></i>
+				<span class="app-menu__label">
+					Staff
+				</span>
+				<i class="treeview-indicator fa fa-angle-right"></i>
+			</a>
+			<ul class="treeview-menu">
+				{% if request.user.is_superuser %}
+				<li>
+					<a class="treeview-item" href="{% url 'staff:add_staff' %}">
+						<i class="icon fa fa-plus"></i>
+						Add Staff
+					</a>
+				</li>
+				{% endif %}
+				<li>
+					<a class="treeview-item" href="{% url 'staff:list_staff' %}">
+						<i class="icon fa fa-plus"></i>
+						View Staffs
+					</a>
+				</li>
+			</ul>
+		</li>
+		<li class="treeview">
+			<a class="app-menu__item" href="#" data-toggle="treeview">
+				<i class="app-menu__icon fa fa-user"></i>
+				<span class="app-menu__label">
+					Equipment
+				</span>
+				<i class="treeview-indicator fa fa-angle-right"></i>
+			</a>
+			<ul class="treeview-menu">
+				<li>
+					<a class="treeview-item" href="{% url 'maintenance:add_equipment' %}">
+						<i class="icon fa fa-plus"></i>
+						Add Equipment
+					</a>
+				</li>
+				<li>
+					<a class="treeview-item" href="{% url 'maintenance:add_equipment_set' %}">
+						<i class="icon fa fa-plus"></i>
+						Add Equipment Set
+					</a>
+				</li>
+			</ul>
+		</li>
+	</ul>
 </aside>
+
+{% block extra_js %}
+
+<script>
+	$(function ($) {
+		let url = window.location.href;
+		$('aside ul li a').each(function () {
+			if (this.href === url) {
+				$(this).addClass('active');
+				// console.log($(this).attr('class'));
+				$(this).parent().parent().parent().addClass('is-expanded');
+				// if ($(this).attr('class').hasClass("active")) {
+				// console.log("Found!")
+				// }
+			}
+		});
+	});
+</script>
+
+{% endblock %}

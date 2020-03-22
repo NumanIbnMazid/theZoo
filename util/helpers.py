@@ -20,12 +20,13 @@ def validate_normal_form(field, field_data, field_qs, model, form, request, view
                     request, messages.SUCCESS,
                     "Updated successfully!"
                 )
-            return 1
+                return 1
         else:
             messages.add_message(
                 request, messages.SUCCESS,
                 "Updated successfully!"
             )
+            return 1
     else:
         if field_qs.exists():
             form.add_error(
@@ -39,7 +40,8 @@ def validate_normal_form(field, field_data, field_qs, model, form, request, view
                 request, messages.SUCCESS,
                 "Created successfully!"
             )
-        return 1
+            return 1
+    return 0
 
 
 def get_simple_object(key='slug', model=None, self=None):
@@ -138,3 +140,55 @@ def simple_form_widget(self=None, field=None, maxlength=50, step=None, pattern=N
     })
     if not pattern == None:
         self.fields[field].help_text = f"Only [{allowed_chars}] these characters are allowed."
+
+
+# Dynamic Field Model
+
+# def get_fields(self):
+#     def get_dynamic_fields(field):
+#         if field.name == 'x':
+#             return (field.name, self.x.title)
+#         else:
+#             value = "-"
+#             if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+#                 value = field.value_from_object(self)
+#             return (field.name, value)
+#     return [get_dynamic_fields(field) for field in self.__class__._meta.fields]
+
+
+def get_dynamic_fields(field=None, self=None):
+    if field.name == 'x':
+        return (field.name, self.x.title)
+    else:
+        value = "-"
+        if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+            value = field.value_from_object(self)
+        return (field.name, value)
+
+
+# ----- Many to Many Field and Others -----
+# def get_fields(self):
+#     def get_dynamic_fields(field):
+#         if field.name == 'equipments':
+#             if field.get_internal_type() == 'ManyToManyField':
+#                 value = ','.join([str(elem)
+#                                     for elem in self.equipments.all()])
+#             else:
+#                 value = self.equipments.name
+#             return (field.name, value)
+#         elif field.name == 'x':
+#             return (field.name, self.x.title)
+#         else:
+#             value = "-"
+#             if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+#                 value = field.value_from_object(self)
+#             return (field.name, value)
+#     return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
+
+
+# --- Lookup in Many to Many ---
+# def get_fields(self):
+#     opts = EquipmentSet._meta
+#     for f in sorted(opts.fields + opts.many_to_many):
+#         print(f'{f.name}: {f}')
+#     pass
