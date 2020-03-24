@@ -4,6 +4,7 @@ from .views import (
     EquipmentSetCreateView, EquipmentSetUpdateView, delete_equipment_set,
     CageCreateView, CageUpdateView, delete_cage,
     MaintenanceCreateView, MaintenanceUpdateView, delete_maintenance,
+    IncidentCreateView, IncidentUpdateView, delete_incident,
 )
 
 
@@ -59,5 +60,18 @@ urlpatterns = [
     path(
         'delete-maintenance/', delete_maintenance,
         name='delete_maintenance'
+    ),
+    # Incident
+    path(
+        'add-incident/', IncidentCreateView.as_view(),
+        name='add_incident'
+    ),
+    path(
+        'update-incident/<id>', IncidentUpdateView.as_view(),
+        name='update_incident'
+    ),
+    path(
+        'delete-incident/', delete_incident,
+        name='delete_incident'
     ),
 ]

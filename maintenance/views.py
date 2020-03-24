@@ -14,7 +14,7 @@ from util.helpers import (
     validate_normal_form, simple_context_data, get_simple_object, delete_simple_object
 )
 from .forms import (
-    EquipmentForm, EquipmentSetForm, CageForm, MaintenanceForm
+    EquipmentForm, EquipmentSetForm, CageForm, MaintenanceForm, IncidentForm
 )
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -39,7 +39,7 @@ class EquipmentCreateView(CreateView):
         )
         result = validate_normal_form(
             field='name', field_data=name, field_qs=field_qs,
-            model=Equipment, form=form, request=self.request, view_type='create'
+            model=Equipment, form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -75,11 +75,10 @@ class EquipmentUpdateView(UpdateView):
         predata = self.get_object().name
         field_qs = Equipment.objects.filter(
             name__iexact=name
-        )
+        ).exclude(id=self.get_object().id)
         result = validate_normal_form(
             field='name', field_data=name, field_qs=field_qs,
-            model=Equipment, form=form, request=self.request, view_type='update',
-            predata=predata
+            model=Equipment, form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -121,7 +120,7 @@ class EquipmentSetCreateView(CreateView):
         )
         result = validate_normal_form(
             field='name', field_data=name, field_qs=field_qs,
-            model=EquipmentSet, form=form, request=self.request, view_type='create'
+            model=EquipmentSet, form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -157,11 +156,10 @@ class EquipmentSetUpdateView(UpdateView):
         predata = self.get_object().name
         field_qs = EquipmentSet.objects.filter(
             name__iexact=name
-        )
+        ).exclude(id=self.get_object().id)
         result = validate_normal_form(
             field='name', field_data=name, field_qs=field_qs,
-            model=EquipmentSet, form=form, request=self.request, view_type='update',
-            predata=predata
+            model=EquipmentSet, form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -204,7 +202,7 @@ class CageCreateView(CreateView):
         )
         result = validate_normal_form(
             field='name', field_data=name, field_qs=field_qs,
-            model=Cage, form=form, request=self.request, view_type='create'
+            model=Cage, form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -240,11 +238,10 @@ class CageUpdateView(UpdateView):
         predata = self.get_object().name
         field_qs = Cage.objects.filter(
             name__iexact=name
-        )
+        ).exclude(id=self.get_object().id)
         result = validate_normal_form(
             field='name', field_data=name, field_qs=field_qs,
-            model=Cage, form=form, request=self.request, view_type='update',
-            predata=predata
+            model=Cage, form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -435,3 +432,84 @@ class MaintenanceUpdateView(UpdateView):
 @csrf_exempt
 def delete_maintenance(request):
     return delete_simple_object(request=request, key='id', model=Maintenance)
+
+
+# ------------------- Incident -------------------
+
+@method_decorator(login_required, name='dispatch')
+class IncidentCreateView(CreateView):
+    template_name = 'snippets/manage.html'
+    form_class = IncidentForm
+
+    def form_valid(self, form):
+        title = form.instance.title
+        field_qs = Incident.objects.filter(
+            title__iexact=title
+        )
+        result = validate_normal_form(
+            field='title', field_data=title, field_qs=field_qs,
+            model=Incident, form=form, request=self.request
+        )
+        if result == 1:
+            return super().form_valid(form)
+        else:
+            return super().form_invalid(form)
+
+    def get_success_url(self):
+        return reverse('maintenance:add_incident')
+
+    def get_context_data(self, **kwargs):
+        context = super(
+            IncidentCreateView, self
+        ).get_context_data(**kwargs)
+        return simple_context_data(
+            context=context, model=Incident,
+            page_title='Create Incident',
+            update_url='maintenance:update_incident',
+            delete_url='maintenance:delete_incident',
+            namespace='incident'
+        )
+
+
+@method_decorator(login_required, name='dispatch')
+class IncidentUpdateView(UpdateView):
+    template_name = 'snippets/manage.html'
+    form_class = IncidentForm
+
+    def get_object(self):
+        return get_simple_object(key='id', model=Incident, self=self)
+
+    def form_valid(self, form):
+        title = form.instance.title
+        predata = self.get_object().title
+        field_qs = Incident.objects.filter(
+            title__iexact=title
+        ).exclude(id=self.get_object().id)
+        result = validate_normal_form(
+            field='title', field_data=title, field_qs=field_qs,
+            model=Incident, form=form, request=self.request
+        )
+        if result == 1:
+            return super().form_valid(form)
+        else:
+            return super().form_invalid(form)
+
+    def get_success_url(self):
+        return reverse('maintenance:add_incident')
+
+    def get_context_data(self, **kwargs):
+        context = super(
+            IncidentUpdateView, self
+        ).get_context_data(**kwargs)
+        return simple_context_data(
+            context=context, model=Incident,
+            page_title='Update Incident',
+            update_url='maintenance:update_incident',
+            delete_url='maintenance:delete_incident',
+            namespace='incident'
+        )
+
+
+@csrf_exempt
+def delete_incident(request):
+    return delete_simple_object(request=request, key='id', model=Incident)

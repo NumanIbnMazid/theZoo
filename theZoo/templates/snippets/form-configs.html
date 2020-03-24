@@ -31,7 +31,11 @@
         });
         $('#datepicker2').datetimepicker({
             format: 'Y-m-d',
-            minDate: now(),
+            maxDate: now(),
+            timepicker:false,
+        });
+        $('#datepicker3').datetimepicker({
+            format: 'Y-m-d',
             timepicker:false,
         });
         $('#datetimepicker1').datetimepicker({
@@ -60,7 +64,6 @@
             format: 'H:i',
             timepicker:true,
             datepicker:false,
-
         });
         $('#timepicker2').datetimepicker({
             format: 'H:i',
@@ -73,6 +76,9 @@
             minDate: now(),
             maxDate: next(),
             datepicker:false,
+            onClose:function(dp,$input){
+                $input.val($("#datepicker1").val() + " " + $input.val().split(' ')[1])
+            }
         });
         $('#hiddendatepicker2').datetimepicker({
             format: 'Y-m-d H:i',
@@ -80,6 +86,9 @@
             minDate: now(),
             maxDate: next(),
             datepicker:false,
+            onClose:function(dp,$input){
+                $input.val($("#datepicker1").val() + " " + $input.val().split(' ')[1])
+            }
         });
     });
 </script>

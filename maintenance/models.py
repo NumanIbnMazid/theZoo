@@ -197,8 +197,8 @@ class Incident(models.Model):
     title = models.CharField(
         max_length=255, verbose_name='Title'
     )
-    staff = models.ForeignKey(
-        Staff, on_delete=models.CASCADE, related_name='staff_incident', verbose_name='Staff'
+    staff = models.ManyToManyField(
+        Staff, related_name='staff_incident', verbose_name='Staff'
     )
     cage = models.ForeignKey(
         Cage, on_delete=models.CASCADE, related_name='cage_incident', verbose_name='Cage'
@@ -225,7 +225,24 @@ class Incident(models.Model):
         ordering = ['-created_at']
 
     def get_fields(self):
-        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
+        def get_dynamic_fields(field):
+            if field.name == 'staff':
+                if field.get_internal_type() == 'ManyToManyField':
+                    value = ','.join([str(elem)
+                                      for elem in self.staff.all()])
+                else:
+                    value = self.staff.name
+                return (field.name, value)
+            elif field.name == 'cage':
+                return (field.name, self.cage.name)
+            elif field.name == 'x':
+                return (field.name, self.x.title)
+            else:
+                value = "-"
+                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+                    value = field.value_from_object(self)
+                return (field.name, value)
+        return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
 
 
 

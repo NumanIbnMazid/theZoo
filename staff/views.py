@@ -73,6 +73,28 @@ class StaffUpdateView(UpdateView):
         return None
 
     def form_valid(self, form):
+        email = form.instance.email
+        username = form.instance.username
+        field_qs = Staff.objects.filter(
+            email__iexact=email
+        ).exclude(id=self.get_object().id)
+        field_qs_username = Staff.objects.filter(
+            username__iexact=username
+        ).exclude(id=self.get_object().id)
+        if field_qs.exists():
+            form.add_error(
+                'email', forms.ValidationError(
+                    "This email is already exists! Please try another one."
+                )
+            )
+            return super().form_invalid(form)
+        if field_qs_username.exists():
+            form.add_error(
+                'username', forms.ValidationError(
+                    "This username is already exists! Please try another one."
+                )
+            )
+            return super().form_invalid(form)
         messages.add_message(
             self.request, messages.SUCCESS,
             "Updated successfully!"

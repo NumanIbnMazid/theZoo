@@ -11,7 +11,7 @@ class EquipmentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EquipmentForm, self).__init__(*args, **kwargs)
         simple_form_widget(
-            self=self, field='name', maxlength=50, pattern="^[_A-z0-9 .,'-#]{1,}$",
+            self=self, field='name', maxlength=50, pattern="^[_A-z0-9.,# ]{1,}$",
             placeholder='Enter equipment name...'
         )
         simple_form_widget(
@@ -29,7 +29,7 @@ class EquipmentSetForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EquipmentSetForm, self).__init__(*args, **kwargs)
         simple_form_widget(
-            self=self, field='name', maxlength=50, pattern="^[_A-z0-9 .,'-#]{1,}$",
+            self=self, field='name', maxlength=50, pattern="^[_A-z0-9.,# ]{1,}$",
             placeholder='Enter equipment name...'
         )
         self.fields['equipments'] = forms.ModelMultipleChoiceField(
@@ -55,7 +55,7 @@ class CageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CageForm, self).__init__(*args, **kwargs)
         simple_form_widget(
-            self=self, field='name', maxlength=50, pattern="^[_A-z0-9 .,'-#]{1,}$",
+            self=self, field='name', maxlength=50, pattern="^[_A-z0-9.,# ]{1,}$",
             placeholder='Enter equipment name...'
         )
         simple_form_widget(
@@ -108,4 +108,36 @@ class MaintenanceForm(forms.ModelForm):
                 raise forms.ValidationError(
                     'End time must be greater than start time!')
             return end_time
+        return None
+
+
+class IncidentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(IncidentForm, self).__init__(*args, **kwargs)
+        simple_form_widget(
+            self=self, field='title', maxlength=50, pattern="^[_A-z0-9.,# ]{1,}$",
+            placeholder='Enter incident title...'
+        )
+        simple_form_widget(
+            self=self, field='description', placeholder='Enter description...'
+        )
+        self.fields['date'].widget.attrs.update({
+            'id': 'datepicker2',
+            'autocomplete': 'off'
+        })
+
+    class Meta:
+        model = Incident
+        fields = [
+            'title', 'staff', 'cage', 'date', 'description'
+        ]
+
+    def clean_date(self):
+        date = self.cleaned_data.get('date')
+        if not date == None:
+            today = datetime.date.today()
+            if not date <= today:
+                raise forms.ValidationError(
+                    'Date must be smaller than or equal today!')
+            return date
         return None

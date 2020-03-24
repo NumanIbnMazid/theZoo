@@ -5,42 +5,20 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 
 
-def validate_normal_form(field, field_data, field_qs, model, form, request, view_type='create', predata=None):
-    if view_type == 'update':
-        if not predata == field_data:
-            if field_qs.exists():
-                form.add_error(
-                    f'field', forms.ValidationError(
-                        f"This {field} is already exists! Please try another one."
-                    )
-                )
-                return 0
-            else:
-                messages.add_message(
-                    request, messages.SUCCESS,
-                    "Updated successfully!"
-                )
-                return 1
-        else:
-            messages.add_message(
-                request, messages.SUCCESS,
-                "Updated successfully!"
+def validate_normal_form(field, field_data, field_qs, model, form, request):
+    if field_qs.exists():
+        form.add_error(
+            field, forms.ValidationError(
+                f"This {field} is already exists! Please try another one."
             )
-            return 1
+        )
+        return 0
     else:
-        if field_qs.exists():
-            form.add_error(
-                field, forms.ValidationError(
-                    f"This {field} is already exists! Please try another one."
-                )
-            )
-            return 0
-        else:
-            messages.add_message(
-                request, messages.SUCCESS,
-                "Created successfully!"
-            )
-            return 1
+        messages.add_message(
+            request, messages.SUCCESS,
+            "Created successfully!"
+        )
+        return 1
     return 0
 
 
@@ -123,6 +101,7 @@ def validate_chars(field_data, allowed_chars=None, max_length=50):
 def simple_form_widget(self=None, field=None, maxlength=50, step=None, pattern=None, placeholder=None):
     field_name = ' '.join(field.split('_')).title()
     allowed_chars = pattern
+    print(pattern)
     if not pattern == None:
         characters_to_remove = '^[]{1,}$'
         for character in characters_to_remove:
