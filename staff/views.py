@@ -54,6 +54,7 @@ class StaffCreateView(CreateView):
             StaffCreateView, self
         ).get_context_data(**kwargs)
         context['page_title'] = 'Add Staff'
+        context['delete_url'] = 'staff:delete_staff'
         return context
 
 

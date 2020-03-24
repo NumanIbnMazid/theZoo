@@ -1,0 +1,85 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        function now() {
+            var d = new Date();
+            var month = d.getMonth() + 1;
+            var day = d.getDate();
+            var output = d.getFullYear() + "/" +
+                (month < 10 ? '0' : '') + month + "/" +
+                (day < 10 ? '0' : '') + day;
+            return output;
+        };
+
+        function next() {
+            var d = new Date();
+            var month = 12;
+            var day = 31;
+            var output = d.getFullYear() + "/" +
+                (month < 10 ? '0' : '') + month + "/" +
+                (day < 10 ? '0' : '') + day;
+            return output;
+        };
+        $('#datetimepicker_DOB').datetimepicker({
+            format: 'Y-m-d',
+            maxDate: now(),
+            timepicker:false,
+        });
+        $('#datepicker1').datetimepicker({
+            format: 'Y-m-d',
+            minDate: now(),
+            timepicker:false,
+        });
+        $('#datepicker2').datetimepicker({
+            format: 'Y-m-d',
+            minDate: now(),
+            timepicker:false,
+        });
+        $('#datetimepicker1').datetimepicker({
+            format: 'Y-m-d H:i',
+            timepicker:true,
+            minDate: now(),
+            maxDate: next(),
+            // datepicker:false,
+            // allowTimes:[
+            // '11:00', '13:00', '15:00', 
+            // '16:00', '18:00', '19:00', '20:00'
+            // ]
+        });
+        $('#datetimepicker2').datetimepicker({
+            format: 'Y-m-d H:i',
+            timepicker:true,
+            minDate: now(),
+            maxDate: next(),
+            // datepicker:false,
+            // allowTimes:[
+            // '11:00', '13:00', '15:00', 
+            // '16:00', '18:00', '19:00', '20:00'
+            // ]
+        });
+        $('#timepicker1').datetimepicker({
+            format: 'H:i',
+            timepicker:true,
+            datepicker:false,
+
+        });
+        $('#timepicker2').datetimepicker({
+            format: 'H:i',
+            timepicker:true,
+            datepicker:false,
+        });
+        $('#hiddendatepicker1').datetimepicker({
+            format: 'Y-m-d H:i',
+            timepicker:true,
+            minDate: now(),
+            maxDate: next(),
+            datepicker:false,
+        });
+        $('#hiddendatepicker2').datetimepicker({
+            format: 'Y-m-d H:i',
+            timepicker:true,
+            minDate: now(),
+            maxDate: next(),
+            datepicker:false,
+        });
+    });
+</script>

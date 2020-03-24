@@ -1,6 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from decimal import Decimal
+from django.db.models.signals import pre_save, post_save
+from django.dispatch import receiver
+import datetime
 from staff.models import Staff
 from util.helpers import get_dynamic_fields
 
@@ -50,7 +53,9 @@ class EquipmentSet(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        values = ','.join([str(elem)
+                          for elem in self.equipments.all()])
+        return self.name + f" [{values}]"
 
     class Meta:
         verbose_name = 'Equipment Set'
@@ -127,23 +132,23 @@ class Cage(models.Model):
 
 
 class Maintenance(models.Model):
-    staff = models.ForeignKey(
-        Staff, on_delete=models.CASCADE, related_name='staff_maintenance', verbose_name='Staff'
-    )
     cage = models.ForeignKey(
         Cage, on_delete=models.CASCADE, related_name='cage_maintenance', verbose_name='Cage'
+    )
+    staff = models.ManyToManyField(
+        Staff, related_name='staff_maintenance', verbose_name='Staff'
     )
     date = models.DateField(
         verbose_name='Date'
     )
-    start_time = models.TimeField(
+    start_time = models.DateTimeField(
         verbose_name='Start Time'
     )
-    end_time = models.TimeField(
+    end_time = models.DateTimeField(
         verbose_name='End Time'
     )
-    equipment_set = models.ForeignKey(
-        EquipmentSet, on_delete=models.CASCADE, related_name='maintenence_equipment_set', verbose_name='Equipment Set'
+    equipment_set = models.ManyToManyField(
+        EquipmentSet, related_name='maintenence_equipment_set', verbose_name='Equipment Set'
     )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Created At'
@@ -153,15 +158,39 @@ class Maintenance(models.Model):
     )
 
     def __str__(self):
-        return self.staff.name
+        return self.cage.name
 
     class Meta:
         verbose_name = 'Maintenance'
         verbose_name_plural = 'Maintenances'
-        ordering = ['-created_at']
+        ordering = ['date']
 
     def get_fields(self):
-        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
+        def get_dynamic_fields(field):
+            if field.name == 'staff':
+                if field.get_internal_type() == 'ManyToManyField':
+                    value = ','.join([str(elem)
+                                      for elem in self.staff.all()])
+                else:
+                    value = self.staff.name
+                return (field.name, value)
+            elif field.name == 'equipment_set':
+                if field.get_internal_type() == 'ManyToManyField':
+                    value = ','.join([str(elem)
+                                      for elem in self.equipment_set.all()])
+                else:
+                    value = self.equipment_set.name
+                return (field.name, value)
+            elif field.name == 'cage':
+                return (field.name, self.cage.name)
+            elif field.name == 'x':
+                return (field.name, self.x.title)
+            else:
+                value = "-"
+                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+                    value = field.value_from_object(self)
+                return (field.name, value)
+        return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
 
 
 class Incident(models.Model):
@@ -197,3 +226,25 @@ class Incident(models.Model):
 
     def get_fields(self):
         return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
+
+
+
+# Employee Slug Generate
+# def maintenance_date_pre_save_reciever(sender, instance, *args, **kwargs):
+#     str_date = str(instance.date).split('-')
+#     str_start_time = str(instance.start_time).split(':')
+#     str_end_time = str(instance.end_time).split(':')
+#     start_date = datetime.datetime(
+#         int(str_date[0]), int(str_date[1]), int(str_date[2]), int(
+#             str_start_time[0]), int(str_start_time[1])
+#     )
+#     end_date = datetime.datetime(
+#         int(str_date[0]), int(str_date[1]), int(str_date[2]), int(
+#             str_end_time[0]), int(str_end_time[1])
+#     )
+#     instance.start_time = start_date
+#     instance.end_time = end_date
+#     print("ZZZZ")
+
+
+# pre_save.connect(maintenance_date_pre_save_reciever, sender=Maintenance)
