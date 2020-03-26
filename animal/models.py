@@ -4,10 +4,14 @@ from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django_countries.fields import CountryField
 from maintenance.models import Cage
+from util.helpers import get_dynamic_fields
 
 
 
 class Species(models.Model):
+    name = models.CharField(
+        max_length=100, verbose_name='Name'
+    )
     kingdom = models.CharField(
         max_length=100, verbose_name='Kingdom'
     )
@@ -36,6 +40,9 @@ class Species(models.Model):
     def __str__(self):
         return self.name
 
+    def get_fields(self):
+        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
+
     class Meta:
         verbose_name = 'Species'
         verbose_name_plural = 'Specieses'
@@ -58,6 +65,9 @@ class HealthPoint(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_fields(self):
+        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
 
     class Meta:
         verbose_name = 'HealthPoint'
@@ -95,7 +105,7 @@ class Animal(models.Model):
     weight = models.DecimalField(
         decimal_places=2, max_digits=5, validators=[MinValueValidator(
             Decimal(0.00)
-        )], null=True, blank=True, verbose_name='Weight'
+        )], null=True, blank=True, verbose_name='Weight (kg)'
     )
     dob = models.DateField(
         null=True, blank=True, verbose_name='DOB'
@@ -119,6 +129,21 @@ class Animal(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_fields(self):
+        def get_dynamic_fields(field):
+            if field.name == 'species':
+                return (field.name, self.species.name)
+            elif field.name == 'health_point':
+                return (field.name, self.health_point.name)
+            elif field.name == 'cage':
+                return (field.name, self.cage.name)
+            else:
+                value = "-"
+                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+                    value = field.value_from_object(self)
+                return (field.name, value)
+        return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
 
     class Meta:
         verbose_name = 'Animal'

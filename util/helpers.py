@@ -5,21 +5,26 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 
 
-def validate_normal_form(field, field_data, field_qs, model, form, request):
-    if field_qs.exists():
-        form.add_error(
-            field, forms.ValidationError(
-                f"This {field} is already exists! Please try another one."
+def validate_normal_form(field, field_qs, form, request):
+    if not field_qs == None:
+        if field_qs.exists():
+            form.add_error(
+                field, forms.ValidationError(
+                    f"This {field} is already exists! Please try another one."
+                )
             )
-        )
-        return 0
+            return 0
+    if 'update' in request.path or 'edit' in request.path:
+        dynamic_msg = "Data Updated Successfully !!!"
+    elif 'create' in request.path or 'add' in request.path:
+        dynamic_msg = "Data Created Successfully !!!"
     else:
-        messages.add_message(
-            request, messages.SUCCESS,
-            "Created successfully!"
-        )
-        return 1
-    return 0
+        dynamic_msg = "Data Manipulated Successfully !!!"
+    messages.add_message(
+        request, messages.SUCCESS,
+        dynamic_msg
+    )
+    return 1
 
 
 def get_simple_object(key='slug', model=None, self=None):

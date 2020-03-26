@@ -97,17 +97,17 @@ class Cage(models.Model):
     length = models.DecimalField(
         decimal_places=2, max_digits=5, validators=[MinValueValidator(
             Decimal(0.00)
-        )], null=True, blank=True, verbose_name='Length'
+        )], null=True, blank=True, verbose_name='Length (feet)'
     )
     height = models.DecimalField(
         decimal_places=2, max_digits=5, validators=[MinValueValidator(
             Decimal(0.00)
-        )], null=True, blank=True, verbose_name='Height'
+        )], null=True, blank=True, verbose_name='Height (feet)'
     )
     width = models.DecimalField(
         decimal_places=2, max_digits=5, validators=[MinValueValidator(
             Decimal(0.00)
-        )], null=True, blank=True, verbose_name='Width'
+        )], null=True, blank=True, verbose_name='Width (feet)'
     )
     cover_type = models.CharField(
         max_length=100, choices=COVER_TYPE_CHOICES, verbose_name='Cover Type'

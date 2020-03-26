@@ -38,8 +38,8 @@ class EquipmentCreateView(CreateView):
             name__iexact=name
         )
         result = validate_normal_form(
-            field='name', field_data=name, field_qs=field_qs,
-            model=Equipment, form=form, request=self.request
+            field='name', field_qs=field_qs,
+            form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -77,8 +77,8 @@ class EquipmentUpdateView(UpdateView):
             name__iexact=name
         ).exclude(id=self.get_object().id)
         result = validate_normal_form(
-            field='name', field_data=name, field_qs=field_qs,
-            model=Equipment, form=form, request=self.request
+            field='name', field_qs=field_qs,
+            form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -119,8 +119,8 @@ class EquipmentSetCreateView(CreateView):
             name__iexact=name
         )
         result = validate_normal_form(
-            field='name', field_data=name, field_qs=field_qs,
-            model=EquipmentSet, form=form, request=self.request
+            field='name', field_qs=field_qs,
+            form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -158,8 +158,8 @@ class EquipmentSetUpdateView(UpdateView):
             name__iexact=name
         ).exclude(id=self.get_object().id)
         result = validate_normal_form(
-            field='name', field_data=name, field_qs=field_qs,
-            model=EquipmentSet, form=form, request=self.request
+            field='name', field_qs=field_qs,
+            form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -201,8 +201,8 @@ class CageCreateView(CreateView):
             name__iexact=name
         )
         result = validate_normal_form(
-            field='name', field_data=name, field_qs=field_qs,
-            model=Cage, form=form, request=self.request
+            field='name', field_qs=field_qs,
+            form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -240,8 +240,8 @@ class CageUpdateView(UpdateView):
             name__iexact=name
         ).exclude(id=self.get_object().id)
         result = validate_normal_form(
-            field='name', field_data=name, field_qs=field_qs,
-            model=Cage, form=form, request=self.request
+            field='name', field_qs=field_qs,
+            form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -447,8 +447,8 @@ class IncidentCreateView(CreateView):
             title__iexact=title
         )
         result = validate_normal_form(
-            field='title', field_data=title, field_qs=field_qs,
-            model=Incident, form=form, request=self.request
+            field='title', field_qs=field_qs,
+            form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)
@@ -486,8 +486,8 @@ class IncidentUpdateView(UpdateView):
             title__iexact=title
         ).exclude(id=self.get_object().id)
         result = validate_normal_form(
-            field='title', field_data=title, field_qs=field_qs,
-            model=Incident, form=form, request=self.request
+            field='title', field_qs=field_qs,
+            form=form, request=self.request
         )
         if result == 1:
             return super().form_valid(form)

@@ -7,6 +7,7 @@ from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 import re
 import os
+import datetime
 
 
 # class CustomSignupForm(SignupForm):
@@ -81,6 +82,15 @@ class UserStaffForm(forms.ModelForm):
                 raise forms.ValidationError("Please keep filesize under %s. Current filesize %s" % (
                     filesizeformat(settings.MAX_IMAGE_UPLOAD_SIZE), filesizeformat(image.size)))
         return image
+    
+    def clean_dob(self):
+        dob = self.cleaned_data.get('dob')
+        if not dob == None:
+            today = datetime.date.today()
+            if dob > today:
+                raise forms.ValidationError(
+                    "Please enter valid Date of Birth. Date cannot be greater than today!")
+        return dob
 
     def save(self, *args, **kwargs):
         self.uf.save(*args, **kwargs)
@@ -211,6 +221,15 @@ class AdminUserStaffForm(forms.ModelForm):
                 raise forms.ValidationError("Please keep filesize under %s. Current filesize %s" % (
                     filesizeformat(settings.MAX_IMAGE_UPLOAD_SIZE), filesizeformat(image.size)))
         return image
+    
+    def clean_dob(self):
+        dob = self.cleaned_data.get('dob')
+        if not dob == None:
+            today = datetime.date.today()
+            if dob > today:
+                raise forms.ValidationError(
+                    "Please enter valid Date of Birth. Date cannot be greater than today!")
+        return dob
 
     def save(self, *args, **kwargs):
         self.uf.save(*args, **kwargs)

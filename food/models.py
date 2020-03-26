@@ -1,5 +1,8 @@
 from django.db import models
 from animal.models import Animal
+from util.helpers import get_dynamic_fields
+from django.core.validators import MinValueValidator
+from decimal import Decimal
 
 class Food(models.Model):
     name = models.CharField(
@@ -8,20 +11,30 @@ class Food(models.Model):
     description = models.TextField(
         max_length=500, verbose_name='Description', null=True, blank=True
     )
-    protein = models.IntegerField(
-        verbose_name='Protein', null=True, blank=True
+    protein = models.DecimalField(
+        decimal_places=2, max_digits=5, validators=[MinValueValidator(
+            Decimal(0.00)
+        )], null=True, blank=True, verbose_name='Protein (gm)'
     )
-    carbohydrate = models.IntegerField(
-        verbose_name='Carbohydrate', null=True, blank=True
+    carbohydrate = models.DecimalField(
+        decimal_places=2, max_digits=5, validators=[MinValueValidator(
+            Decimal(0.00)
+        )], null=True, blank=True, verbose_name='Carbohydrate (gm)'
     )
-    fat = models.IntegerField(
-        verbose_name='Fat', null=True, blank=True
+    fat = models.DecimalField(
+        decimal_places=2, max_digits=5, validators=[MinValueValidator(
+            Decimal(0.00)
+        )], null=True, blank=True, verbose_name='Fat (gm)'
     )
-    vitamin = models.IntegerField(
-        verbose_name='Vitamin', null=True, blank=True
+    vitamin = models.DecimalField(
+        decimal_places=2, max_digits=5, validators=[MinValueValidator(
+            Decimal(0.00)
+        )], null=True, blank=True, verbose_name='Vitamin (gm)'
     )
-    mineral = models.IntegerField(
-        verbose_name='Mineral', null=True, blank=True
+    mineral = models.DecimalField(
+        decimal_places=2, max_digits=5, validators=[MinValueValidator(
+            Decimal(0.00)
+        )], null=True, blank=True, verbose_name='Mineral (gm)'
     )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Created At'
@@ -32,6 +45,9 @@ class Food(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_fields(self):
+        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
 
     class Meta:
         verbose_name = 'Food'
@@ -49,8 +65,10 @@ class AnimalFood(models.Model):
     date = models.DateField(
         verbose_name='Date', null=True, blank=True
     )
-    quantity = models.IntegerField(
-        verbose_name='Quantity', null=True, blank=True
+    quantity = models.DecimalField(
+        decimal_places=2, max_digits=5, validators=[MinValueValidator(
+            Decimal(0.00)
+        )], null=True, blank=True, verbose_name='Quantity (kg)'
     )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Created At'
@@ -61,6 +79,21 @@ class AnimalFood(models.Model):
 
     def __str__(self):
         return self.animal.name
+
+    def get_fields(self):
+        def get_dynamic_fields(field):
+            if field.name == 'animal':
+                return (field.name, self.animal.name)
+            elif field.name == 'food':
+                return (field.name, self.food.name)
+            elif field.name == 'x':
+                return (field.name, self.x.title)
+            else:
+                value = "-"
+                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+                    value = field.value_from_object(self)
+                return (field.name, value)
+        return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
 
     class Meta:
         verbose_name = 'Animal Food'
