@@ -23,6 +23,7 @@
                 {% if label != 'id' and label != 'slug' and label != 'created_at' and label != 'updated_at' %}
                 
                 {% if label in 'image, photo, picture' %}
+
                 <td>
                 {% if not value.url == None %}
                 
@@ -32,6 +33,12 @@
                 ---
                 {% endif %}
                 </td>
+
+                {% elif label in 'country' %}
+                <td>
+                    {{ value.name }}
+                </td>
+
                 {% else %}
                 <td>{{ value }}</td>
                 {% endif %}

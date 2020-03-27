@@ -2,6 +2,7 @@ from django.db import models
 from django_countries.fields import CountryField
 from animal.models import Animal
 from staff.models import Staff
+from util.helpers import get_dynamic_fields
 
 
 class Medicine(models.Model):
@@ -27,6 +28,9 @@ class Medicine(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def get_fields(self):
+        return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
 
     class Meta:
         verbose_name = 'Medicine'
@@ -55,7 +59,18 @@ class Disease(models.Model):
     )
 
     def __str__(self):
-        return self.name
+        return self.name + f" [{self.animal.name}]"
+    
+    def get_fields(self):
+        def get_dynamic_fields(field):
+            if field.name == 'animal':
+                return (field.name, self.animal.name)
+            else:
+                value = "-"
+                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+                    value = field.value_from_object(self)
+                return (field.name, value)
+        return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
 
     class Meta:
         verbose_name = 'Disease'
@@ -68,13 +83,13 @@ class AnimalTreatment(models.Model):
     #     Animal, on_delete=models.CASCADE, related_name='animal_treatment', verbose_name='Animal'
     # )
     disease = models.ForeignKey(
-        Medicine, on_delete=models.CASCADE, related_name='animal_treatment_disease', verbose_name='Disease'
+        Disease, on_delete=models.CASCADE, related_name='animal_treatment_disease', verbose_name='Disease'
     )
-    medicine = models.ForeignKey(
-        Medicine, on_delete=models.CASCADE, related_name='animal_treatment_medicine', verbose_name='Medicine'
+    medicine = models.ManyToManyField(
+        Medicine, related_name='animal_treatment_medicine', verbose_name='Medicine'
     )
-    staff = models.ForeignKey(
-        Staff, on_delete=models.CASCADE, related_name='animal_treatment_staff', verbose_name='Staff'
+    staff = models.ManyToManyField(
+        Staff, related_name='animal_treatment_staff', verbose_name='Staff'
     )
     date = models.DateField(
         verbose_name='Date', null=True, blank=True
@@ -91,6 +106,31 @@ class AnimalTreatment(models.Model):
 
     def __str__(self):
         return self.animal.name
+    
+    def get_fields(self):
+        def get_dynamic_fields(field):
+            if field.name == 'medicine':
+                if field.get_internal_type() == 'ManyToManyField':
+                    value = ','.join([str(elem)
+                                      for elem in self.medicine.all()])
+                else:
+                    value = self.medicine.name
+                return (field.name, value)
+            elif field.name == 'staff':
+                if field.get_internal_type() == 'ManyToManyField':
+                    value = ','.join([str(elem)
+                                      for elem in self.staff.all()])
+                else:
+                    value = self.staff.name
+                return (field.name, value)
+            elif field.name == 'disease':
+                return (field.name, self.disease)
+            else:
+                value = "-"
+                if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
+                    value = field.value_from_object(self)
+                return (field.name, value)
+        return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
 
     class Meta:
         verbose_name = 'AnimalTreatment'

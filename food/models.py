@@ -14,27 +14,27 @@ class Food(models.Model):
     protein = models.DecimalField(
         decimal_places=2, max_digits=5, validators=[MinValueValidator(
             Decimal(0.00)
-        )], null=True, blank=True, verbose_name='Protein (gm)'
+        )], null=True, blank=True, verbose_name='Protein'
     )
     carbohydrate = models.DecimalField(
         decimal_places=2, max_digits=5, validators=[MinValueValidator(
             Decimal(0.00)
-        )], null=True, blank=True, verbose_name='Carbohydrate (gm)'
+        )], null=True, blank=True, verbose_name='Carbohydrate'
     )
     fat = models.DecimalField(
         decimal_places=2, max_digits=5, validators=[MinValueValidator(
             Decimal(0.00)
-        )], null=True, blank=True, verbose_name='Fat (gm)'
+        )], null=True, blank=True, verbose_name='Fat'
     )
     vitamin = models.DecimalField(
         decimal_places=2, max_digits=5, validators=[MinValueValidator(
             Decimal(0.00)
-        )], null=True, blank=True, verbose_name='Vitamin (gm)'
+        )], null=True, blank=True, verbose_name='Vitamin'
     )
     mineral = models.DecimalField(
         decimal_places=2, max_digits=5, validators=[MinValueValidator(
             Decimal(0.00)
-        )], null=True, blank=True, verbose_name='Mineral (gm)'
+        )], null=True, blank=True, verbose_name='Mineral'
     )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Created At'

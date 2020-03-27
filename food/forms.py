@@ -14,6 +14,11 @@ class FoodForm(forms.ModelForm):
         simple_form_widget(
             self=self, field='description', placeholder='Enter description...'
         )
+        self.fields['protein'].help_text = "% per Kilogram (1000 gram)"
+        self.fields['carbohydrate'].help_text = "% per Kilogram (1000 gram)"
+        self.fields['fat'].help_text = "% per Kilogram (1000 gram)"
+        self.fields['vitamin'].help_text = "% per Kilogram (1000 gram)"
+        self.fields['mineral'].help_text = "% per Kilogram (1000 gram)"
 
     class Meta:
         model = Food
