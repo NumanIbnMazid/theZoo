@@ -99,11 +99,12 @@ class DiseaseCreateView(CreateView):
     def form_valid(self, form):
         name = form.instance.name
         field_qs = Disease.objects.filter(
-            name__iexact=name, animal=form.instance.animal, date__iexact=form.instance.date
+            name__iexact=name, animal__id__iexact=form.instance.animal.id, date__iexact=form.instance.date
         )
         result = validate_normal_form(
             field='name', field_qs=field_qs,
-            form=form, request=self.request
+            form=form, request=self.request,
+            validation_message="You already created this disease for the animal in that day."
         )
         if result == 1:
             return super().form_valid(form)

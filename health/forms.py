@@ -79,7 +79,7 @@ class AnimalTreatmentForm(forms.ModelForm):
     class Meta:
         model = AnimalTreatment
         fields = [
-            'disease', 'medicine', 'staff', 'date', 'description'
+            'disease', 'medicine', 'staff', 'date', 'description', 'recovered'
         ]
 
     def clean_date(self):

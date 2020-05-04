@@ -16,6 +16,7 @@ urlpatterns = [
     path('animal/', include(('animal.urls', 'animal'), namespace='animal')),
     path('food/', include(('food.urls', 'food'), namespace='food')),
     path('health/', include(('health.urls', 'health'), namespace='health')),
+    path('report/', include(('report.urls', 'report'), namespace='report')),
 ]
 
 

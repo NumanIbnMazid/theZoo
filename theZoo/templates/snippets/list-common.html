@@ -6,7 +6,7 @@
             <tr class="text-muted">
                 <th>#</th>
                 {% for key, value in fields.items %}
-                {% if key != 'id' and key != 'slug' and key != 'created_at' and key != 'updated_at' %}
+                {% if key != 'id' and key != 'created_at' and key != 'updated_at' %}
                 <th>{{ value|title }}</th>
                 {% endif %}
                 {% endfor %}
@@ -20,7 +20,7 @@
 
                 {% for label, value in object.get_fields %}
 
-                {% if label != 'id' and label != 'slug' and label != 'created_at' and label != 'updated_at' %}
+                {% if label != 'id' and label != 'created_at' and label != 'updated_at' %}
                 
                 {% if label in 'image, photo, picture' %}
 
@@ -75,7 +75,7 @@
             <tr class="text-center text-muted">
                 <th>#</th>
                 {% for key, value in fields.items %}
-                {% if key != 'id' and key != 'slug' and key != 'created_at' and key != 'updated_at' %}
+                {% if key != 'id' and key != 'created_at' and key != 'updated_at' %}
                 <th>{{ value|title }}</th>
                 {% endif %}
                 {% endfor %}

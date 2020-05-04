@@ -4,7 +4,34 @@ from django.conf import settings
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from middlewares.middlewares import RequestMiddleware
+from django.db.models import Q
 
+
+class StaffQuerySet(models.query.QuerySet):
+    def search(self, query):
+        lookups = (Q(user__username__icontains=query) |
+                   Q(user__first_name__icontains=query) |
+                   Q(user__last_name__icontains=query) |
+                   Q(role__icontains=query) |
+                   Q(gender__icontains=query) |
+                   Q(dob__icontains=query) |
+                   Q(address__icontains=query) |
+                   Q(phone__icontains=query) |
+                   Q(posting__icontains=query) |
+                   Q(insurance_cover__icontains=query)
+                   )
+        return self.filter(lookups).distinct()
+
+
+class StaffManager(models.Manager):
+    def get_queryset(self):
+        return StaffQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset()
+
+    def search(self, query):
+        return self.get_queryset().search(query)
 
 
 class Staff(models.Model):
@@ -59,6 +86,8 @@ class Staff(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True, verbose_name='Updated At'
     )
+
+    objects = StaffManager()
 
     def __str__(self):
         return self.user.username

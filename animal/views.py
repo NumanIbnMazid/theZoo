@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from .forms import (
-    SpeciesForm, HealthPointForm, AnimalForm
+    SpeciesForm, HealthPointForm, AnimalForm, AnimalCageForm
 )
 from .models import (
-    Species, HealthPoint, Animal
+    Species, HealthPoint, Animal, AnimalCage
 )
 from django import forms
 from django.views.generic import CreateView, UpdateView, DetailView
@@ -197,8 +197,9 @@ class AnimalCreateView(CreateView):
 
     def form_valid(self, form):
         name = form.instance.name
+        slug = form.instance.slug
         field_qs = Animal.objects.filter(
-            name__iexact=name
+            name__iexact=name, slug=slug
         )
         result = validate_normal_form(
             field='name', field_qs=field_qs,
@@ -257,7 +258,7 @@ class AnimalUpdateView(UpdateView):
         ).get_context_data(**kwargs)
         return simple_context_data(
             context=context, model=Animal,
-            page_title='Update Equipment',
+            page_title='Update Animal',
             update_url='animal:update_animal',
             delete_url='animal:delete_animal',
             namespace='animal'
@@ -267,3 +268,83 @@ class AnimalUpdateView(UpdateView):
 @csrf_exempt
 def delete_animal(request):
     return delete_simple_object(request=request, key='id', model=Animal)
+
+
+# ------------------- AnimalCage -------------------
+
+@method_decorator(login_required, name='dispatch')
+class AnimalCageCreateView(CreateView):
+    template_name = 'snippets/manage.html'
+    form_class = AnimalCageForm
+
+    def form_valid(self, form):
+        animal = form.instance.animal
+        field_qs = AnimalCage.objects.filter(
+            animal=animal
+        )
+        result = validate_normal_form(
+            field='animal', field_qs=field_qs,
+            form=form, request=self.request
+        )
+        if result == 1:
+            return super().form_valid(form)
+        else:
+            return super().form_invalid(form)
+
+    def get_success_url(self):
+        return reverse('animal:add_animal_cage')
+
+    def get_context_data(self, **kwargs):
+        context = super(
+            AnimalCageCreateView, self
+        ).get_context_data(**kwargs)
+        return simple_context_data(
+            context=context, model=AnimalCage,
+            page_title='Assign Animal to Cage',
+            update_url='animal:update_animal_cage',
+            delete_url='animal:delete_animal_cage',
+            namespace='animal_cage'
+        )
+
+
+@method_decorator(login_required, name='dispatch')
+class AnimalCageUpdateView(UpdateView):
+    template_name = 'snippets/manage.html'
+    form_class = AnimalCageForm
+
+    def get_object(self):
+        return get_simple_object(key='id', model=AnimalCage, self=self)
+
+    def form_valid(self, form):
+        animal = form.instance.animal
+        field_qs = AnimalCage.objects.filter(
+            animal=animal
+        ).exclude(id=self.get_object().id)
+        result = validate_normal_form(
+            field='animal', field_qs=field_qs,
+            form=form, request=self.request
+        )
+        if result == 1:
+            return super().form_valid(form)
+        else:
+            return super().form_invalid(form)
+
+    def get_success_url(self):
+        return reverse('animal:add_animal_cage')
+
+    def get_context_data(self, **kwargs):
+        context = super(
+            AnimalCageUpdateView, self
+        ).get_context_data(**kwargs)
+        return simple_context_data(
+            context=context, model=AnimalCage,
+            page_title='Update Animal Cage',
+            update_url='animal:update_animal_cage',
+            delete_url='animal:delete_animal_cage',
+            namespace='animal_cage'
+        )
+
+
+@csrf_exempt
+def delete_animal_cage(request):
+    return delete_simple_object(request=request, key='id', model=AnimalCage)

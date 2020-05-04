@@ -3,6 +3,7 @@ from .views import (
     SpeciesCreateView, SpeciesUpdateView, delete_species,
     HealthPointCreateView, HealthPointUpdateView, delete_health_point,
     AnimalCreateView, AnimalUpdateView, delete_animal,
+    AnimalCageCreateView, AnimalCageUpdateView, delete_animal_cage,
 )
 
 
@@ -45,5 +46,18 @@ urlpatterns = [
     path(
         'delete-animal/', delete_animal,
         name='delete_animal'
+    ),
+    # AnimalCage
+    path(
+        'add-animal-cage/', AnimalCageCreateView.as_view(),
+        name='add_animal_cage'
+    ),
+    path(
+        'update-animal-cage/<id>', AnimalCageUpdateView.as_view(),
+        name='update_animal_cage'
+    ),
+    path(
+        'delete-animal-cage/', delete_animal_cage,
+        name='delete_animal_cage'
     ),
 ]

@@ -1,0 +1,75 @@
+<input type="hidden" id="data_name" value="{{ query_in }}">
+<div class="table-responsive">
+    <table id="statisticsOverallDataTable" class="cell-border hover table-bordered table-hover text-center text-dark"
+        style="width:100%">
+        <thead>
+            <tr>
+                <th>#</th>
+                {% for object in selected_object_list %}
+                {% if forloop.first %}
+                {% for label, value in object.get_fields %}
+                {% if label != 'id' %}
+                <th>{{ label|title }}</th>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in selected_object_list %}
+            <tr class="text-dark">
+                <th scope="row">{{ forloop.counter }}</th>
+
+                {% for label, value in object.get_fields %}
+
+                {% if label != 'id' %}
+
+                {% if label in 'image, photo, picture' %}
+
+                <td>
+                    {% if not value.url == None %}
+
+                    <img src="{{ value.url }}" alt="{{ value }}" style="height:100px;width:100px;">
+
+                    {% else %}
+                    ---
+                    {% endif %}
+                </td>
+
+                {% elif label in 'country' %}
+                <td>
+                    {{ value.name }}
+                </td>
+
+                {% else %}
+                <td>{{ value }}</td>
+                {% endif %}
+
+                {% endif %}
+
+                {% endfor %}
+
+            {% empty %}
+            <tr>
+                <td colspan="{{fields_count}} - 1" class="text-center">
+                    <div class="alert alert-warning">
+                        No item found!
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <th>#</th>
+            {% for object in selected_object_list %}
+            {% if forloop.first %}
+            {% for label, value in object.get_fields %}
+            {% if label != 'id' %}
+            <th>{{ label|title }}</th>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+        </tfoot>
+    </table>

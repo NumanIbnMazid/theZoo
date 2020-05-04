@@ -24,6 +24,14 @@
 				</span>
 			</a>
 		</li>
+		<li>
+			<a class="app-menu__item" href="{% url 'report:report_view' %}">
+				<i class="icon fa fa-plus"></i>
+				<span class="app-menu__label">
+					View Reports
+				</span>
+			</a>
+		</li>
 		<li class="treeview">
 			<a class="app-menu__item" href="#" data-toggle="treeview">
 				<i class="app-menu__icon fa fa-user"></i>
@@ -49,11 +57,12 @@
 				</li>
 			</ul>
 		</li>
+		
 		<li class="treeview">
 			<a class="app-menu__item" href="#" data-toggle="treeview">
-				<i class="app-menu__icon fa fa-user"></i>
+				<i class="app-menu__icon fa fa-cogs"></i>
 				<span class="app-menu__label">
-					Equipment
+					Setup
 				</span>
 				<i class="treeview-indicator fa fa-angle-right"></i>
 			</a>
@@ -70,16 +79,58 @@
 						Add Equipment Set
 					</a>
 				</li>
+				<li>
+					<a class="app-menu__item" href="{% url 'maintenance:add_cage' %}">
+						<i class="icon fa fa-plus"></i>
+						<span class="app-menu__label">
+							Add Cage
+						</span>
+					</a>
+				</li>
+				<li>
+					<a class="app-menu__item" href="{% url 'animal:add_species' %}">
+						<i class="icon fa fa-plus"></i>
+						<span class="app-menu__label">
+							Add Species
+						</span>
+					</a>
+				</li>
+				<li>
+					<a class="app-menu__item" href="{% url 'animal:add_health_point' %}">
+						<i class="icon fa fa-plus"></i>
+						<span class="app-menu__label">
+							Add Health Point
+						</span>
+					</a>
+				</li>
+				<li>
+					<a class="app-menu__item" href="{% url 'food:add_food' %}">
+						<i class="icon fa fa-plus"></i>
+						<span class="app-menu__label">
+							Add Food
+						</span>
+					</a>
+				</li>
+				<li>
+					<a class="app-menu__item" href="{% url 'health:add_medicine' %}">
+						<i class="icon fa fa-plus"></i>
+						<span class="app-menu__label">
+							Add Medicine
+						</span>
+					</a>
+				</li>
 			</ul>
 		</li>
+
 		<li>
-			<a class="app-menu__item" href="{% url 'maintenance:add_cage' %}">
+			<a class="app-menu__item" href="{% url 'animal:add_animal_cage' %}">
 				<i class="icon fa fa-plus"></i>
 				<span class="app-menu__label">
-					Add Cage
+					Assign Animal to Cage
 				</span>
 			</a>
 		</li>
+
 		<li>
 			<a class="app-menu__item" href="{% url 'maintenance:add_maintenance' %}">
 				<i class="icon fa fa-plus"></i>
@@ -97,34 +148,10 @@
 			</a>
 		</li>
 		<li>
-			<a class="app-menu__item" href="{% url 'animal:add_species' %}">
-				<i class="icon fa fa-plus"></i>
-				<span class="app-menu__label">
-					Add Species
-				</span>
-			</a>
-		</li>
-		<li>
-			<a class="app-menu__item" href="{% url 'animal:add_health_point' %}">
-				<i class="icon fa fa-plus"></i>
-				<span class="app-menu__label">
-					Add Health Point
-				</span>
-			</a>
-		</li>
-		<li>
 			<a class="app-menu__item" href="{% url 'animal:add_animal' %}">
 				<i class="icon fa fa-plus"></i>
 				<span class="app-menu__label">
 					Add Animal
-				</span>
-			</a>
-		</li>
-		<li>
-			<a class="app-menu__item" href="{% url 'food:add_food' %}">
-				<i class="icon fa fa-plus"></i>
-				<span class="app-menu__label">
-					Add Food
 				</span>
 			</a>
 		</li>
@@ -141,14 +168,6 @@
 				<i class="icon fa fa-plus"></i>
 				<span class="app-menu__label">
 					Add Disease
-				</span>
-			</a>
-		</li>
-		<li>
-			<a class="app-menu__item" href="{% url 'health:add_medicine' %}">
-				<i class="icon fa fa-plus"></i>
-				<span class="app-menu__label">
-					Add Medicine
 				</span>
 			</a>
 		</li>

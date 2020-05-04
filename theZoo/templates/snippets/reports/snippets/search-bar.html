@@ -1,0 +1,102 @@
+<div class="text-center">
+    <button class="btn btn-info btn-md m-2" type="button" data-toggle="collapse" data-target="#filterCollapse"
+        aria-expanded="false" aria-controls="filterCollapse">
+        <i class="flaticon-search-2 m-1"></i>
+        Filter
+    </button>
+    <div class="collapse {% if not query == None or not query_date_from == None or not query_date_to == None %}in show{% endif %}"
+        id="filterCollapse">
+        <div class="card card-body">
+            <div class="form-group" id="bank_filter_chart_div">
+                <form action="{% url 'report:report_view' %}" method="GET" id="report_filter_form"
+                    data-toggle="validator">
+                    <input type="text" name="q" id="query_q" class="form-control m-2" placeholder="Search for..."
+                        value="{% if not query == None %}{{ query }}{% endif %}">
+
+                    <div class="row" id="date_range">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="date-from-addon">From</span>
+                                    </div>
+                                    <input type="text" class="form-control" name="date-from" id="date_from"
+                                        placeholder="date from..." aria-label="date_from"
+                                        value="{% if not query_date_from == None %}{{query_date_from}}{% endif %}"
+                                        aria-describedby="date-from-addon" onchange="dateFilterFunction()">
+                                </div>
+                                <div class="error text-center">
+                                    <p class="text-danger" id="from_error_msg"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="date-to-addon">To</span>
+                                    </div>
+                                    <input type="text" class="form-control" name="date-to" id="date_to"
+                                        value="{% if not query_date_to == None %}{{query_date_to}}{% endif %}"
+                                        placeholder="date to..." aria-label="date_to" aria-describedby="date-to-addon"
+                                        onchange="dateFilterFunction()">
+                                </div>
+                                <div class="error text-center">
+                                    <p class="text-danger" id="to_error_msg"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="sel1">Search in:</label>
+                            <select class="browser-default custom-select" name="query-in">
+                                <option {% if query_in == "Animal" or query_in == "" %}selected{% endif %}
+                                    value="Animal">
+                                    Animal
+                                </option>
+                                <option {% if query_in == "AnimalCage" %}selected{% endif %}
+                                    value="AnimalCage">
+                                    Animal Cage
+                                </option>
+                                <option {% if query_in == "Food" %}selected{% endif %} value="Food">
+                                    Food
+                                </option>
+                                <option {% if query_in == "AnimalFood" %}selected{% endif %} value="AnimalFood">
+                                    Animal Food
+                                </option>
+                                <option {% if query_in == "Disease" %}selected{% endif %} value="Disease">
+                                    Disease
+                                </option>
+                                <option {% if query_in == "AnimalTreatment" %}selected{% endif %}
+                                    value="AnimalTreatment">
+                                    Animal Treatment
+                                </option>
+                                <option {% if query_in == "Cage" %}selected{% endif %} value="Cage">
+                                    Cage
+                                </option>
+                                <option {% if query_in == "Maintenance" %}selected{% endif %} value="Maintenance">
+                                    Maintenance
+                                </option>
+                                <option {% if query_in == "Incident" %}selected{% endif %} value="Incident">
+                                    Incident
+                                </option>
+                                <option {% if query_in == "Staff" %}selected{% endif %} value="Staff">
+                                    Staff
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="error text-center">
+                        <p class="text-danger font-bold" id="error_msg"></p>
+                    </div>
+                    <div class="input-icon-addon text-center m-2">
+                        <button class="btn btn-success btn-sm" type="submit" id="bank_chart_filter_btn">
+                            <i class="flaticon-chain"></i> Apply Filter
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

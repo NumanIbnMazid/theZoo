@@ -3,7 +3,7 @@ from django_countries.fields import CountryField
 from animal.models import Animal
 from staff.models import Staff
 from util.helpers import get_dynamic_fields
-
+from django.db.models import Q
 
 class Medicine(models.Model):
     name = models.CharField(
@@ -28,7 +28,7 @@ class Medicine(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     def get_fields(self):
         return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
 
@@ -37,6 +37,34 @@ class Medicine(models.Model):
         verbose_name_plural = 'Medicines'
         ordering = ['-created_at']
 
+
+class DiseaseQuerySet(models.query.QuerySet):
+    def search(self, query):
+        lookups = (Q(animal__name__icontains=query) |
+                   Q(animal__slug__icontains=query) |
+                   Q(animal__species__name__icontains=query) |
+                   Q(animal__animal_type__icontains=query) |
+                   Q(animal__colour__icontains=query) |
+                   Q(animal__weight__icontains=query) |
+                   Q(animal__dob__icontains=query) |
+                   Q(animal__country__icontains=query) |
+                   Q(animal__health_point__name__icontains=query) |
+                   Q(name__icontains=query) |
+                   Q(date__icontains=query) |
+                   Q(description__icontains=query)
+                   )
+        return self.filter(lookups).distinct()
+
+
+class DiseaseManager(models.Manager):
+    def get_queryset(self):
+        return DiseaseQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset()
+
+    def search(self, query):
+        return self.get_queryset().search(query)
 
 class Disease(models.Model):
     name = models.CharField(
@@ -58,13 +86,15 @@ class Disease(models.Model):
         auto_now=True, verbose_name='Updated At'
     )
 
+    objects = DiseaseManager()
+
     def __str__(self):
         return self.name + f" [{self.animal.name}]"
-    
+
     def get_fields(self):
         def get_dynamic_fields(field):
             if field.name == 'animal':
-                return (field.name, self.animal.name)
+                return (field.name, self.animal.get_name)
             else:
                 value = "-"
                 if not field.value_from_object(self) == None and not field.value_from_object(self) == "":
@@ -78,7 +108,56 @@ class Disease(models.Model):
         ordering = ['-created_at']
 
 
+class AnimalTreatmentQuerySet(models.query.QuerySet):
+    def search(self, query):
+        lookups = (Q(disease__animal__name__icontains=query) |
+                   Q(disease__animal__slug__icontains=query) |
+                   Q(disease__animal__species__name__icontains=query) |
+                   Q(disease__animal__animal_type__icontains=query) |
+                   Q(disease__animal__colour__icontains=query) |
+                   Q(disease__animal__weight__icontains=query) |
+                   Q(disease__animal__dob__icontains=query) |
+                   Q(disease__animal__country__icontains=query) |
+                   Q(disease__animal__health_point__name__icontains=query) |
+                   Q(disease__name__icontains=query) |
+                   Q(disease__date__icontains=query) |
+                   Q(disease__description__icontains=query) |
+                   Q(staff__user__username__icontains=query) |
+                   Q(staff__user__first_name__icontains=query) |
+                   Q(staff__user__last_name__icontains=query) |
+                   Q(staff__role__icontains=query) |
+                   Q(staff__gender__icontains=query) |
+                   Q(staff__dob__icontains=query) |
+                   Q(staff__address__icontains=query) |
+                   Q(staff__phone__icontains=query) |
+                   Q(staff__posting__icontains=query) |
+                   Q(staff__insurance_cover__icontains=query) |
+                   Q(date__icontains=query) |
+                   Q(description__icontains=query) |
+                   Q(recovered__icontains=query)
+                   )
+        return self.filter(lookups).distinct()
+
+
+class AnimalTreatmentManager(models.Manager):
+    def get_queryset(self):
+        return AnimalTreatmentQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset()
+
+    def search(self, query):
+        return self.get_queryset().search(query)
+
+
 class AnimalTreatment(models.Model):
+    # CONDITION_CHOICES
+    YES = 'Recovered'
+    NO = 'Not Recovered'
+    CONDITION_CHOICES = (
+        (YES, 'Recovered'),
+        (NO, 'Not Recovered'),
+    )
     # animal = models.ForeignKey(
     #     Animal, on_delete=models.CASCADE, related_name='animal_treatment', verbose_name='Animal'
     # )
@@ -97,6 +176,9 @@ class AnimalTreatment(models.Model):
     description = models.TextField(
         max_length=500, null=True, blank=True, verbose_name='Description'
     )
+    recovered = models.CharField(
+        default='Not Recovered', choices=CONDITION_CHOICES, max_length=50, verbose_name='Recovered'
+    )
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name='Created At'
     )
@@ -104,9 +186,11 @@ class AnimalTreatment(models.Model):
         auto_now=True, verbose_name='Updated At'
     )
 
+    objects = AnimalTreatmentManager()
+
     def __str__(self):
         return self.animal.name
-    
+
     def get_fields(self):
         def get_dynamic_fields(field):
             if field.name == 'medicine':

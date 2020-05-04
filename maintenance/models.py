@@ -6,7 +6,7 @@ from django.dispatch import receiver
 import datetime
 from staff.models import Staff
 from util.helpers import get_dynamic_fields
-
+from django.db.models import Q
 
 
 class Equipment(models.Model):
@@ -82,6 +82,27 @@ class EquipmentSet(models.Model):
         return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
     
 
+class CageQuerySet(models.query.QuerySet):
+    def search(self, query):
+        lookups = (Q(name__icontains=query) |
+                   Q(length__icontains=query) |
+                   Q(height__icontains=query) |
+                   Q(width__icontains=query) |
+                   Q(cover_type__icontains=query)
+                   )
+        return self.filter(lookups).distinct()
+
+
+class CageManager(models.Manager):
+    def get_queryset(self):
+        return CageQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset()
+
+    def search(self, query):
+        return self.get_queryset().search(query)
+
 
 class Cage(models.Model):
     GLASS = 'Glass'
@@ -119,6 +140,8 @@ class Cage(models.Model):
         auto_now=True, verbose_name='Updated At'
     )
 
+    objects = CageManager()
+
     def __str__(self):
         return self.name
 
@@ -130,6 +153,40 @@ class Cage(models.Model):
     def get_fields(self):
         return [get_dynamic_fields(field, self) for field in self.__class__._meta.fields]
 
+
+class MaintenanceQuerySet(models.query.QuerySet):
+    def search(self, query):
+        lookups = (Q(cage__name__icontains=query) |
+                   Q(cage__length__icontains=query) |
+                   Q(cage__height__icontains=query) |
+                   Q(cage__width__icontains=query) |
+                   Q(cage__cover_type__icontains=query) |
+                   Q(staff__user__username__icontains=query) |
+                   Q(staff__user__first_name__icontains=query) |
+                   Q(staff__user__last_name__icontains=query) |
+                   Q(staff__role__icontains=query) |
+                   Q(staff__gender__icontains=query) |
+                   Q(staff__dob__icontains=query) |
+                   Q(staff__address__icontains=query) |
+                   Q(staff__phone__icontains=query) |
+                   Q(staff__posting__icontains=query) |
+                   Q(staff__insurance_cover__icontains=query) |
+                   Q(date__icontains=query) |
+                   Q(start_time__icontains=query) |
+                   Q(end_time__icontains=query)
+                   )
+        return self.filter(lookups).distinct()
+
+
+class MaintenanceManager(models.Manager):
+    def get_queryset(self):
+        return MaintenanceQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset()
+
+    def search(self, query):
+        return self.get_queryset().search(query)
 
 class Maintenance(models.Model):
     cage = models.ForeignKey(
@@ -156,6 +213,8 @@ class Maintenance(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True, verbose_name='Updated At'
     )
+
+    objects = MaintenanceManager()
 
     def __str__(self):
         return self.cage.name
@@ -193,6 +252,31 @@ class Maintenance(models.Model):
         return [get_dynamic_fields(field) for field in (self.__class__._meta.fields + self.__class__._meta.many_to_many)]
 
 
+class IncidentQuerySet(models.query.QuerySet):
+    def search(self, query):
+        lookups = (Q(cage__name__icontains=query) |
+                   Q(cage__length__icontains=query) |
+                   Q(cage__height__icontains=query) |
+                   Q(cage__width__icontains=query) |
+                   Q(cage__cover_type__icontains=query) |
+                   Q(title__icontains=query) |
+                   Q(date__icontains=query) |
+                   Q(description__icontains=query)
+                   )
+        return self.filter(lookups).distinct()
+
+
+class IncidentManager(models.Manager):
+    def get_queryset(self):
+        return IncidentQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset()
+
+    def search(self, query):
+        return self.get_queryset().search(query)
+
+
 class Incident(models.Model):
     title = models.CharField(
         max_length=255, verbose_name='Title'
@@ -215,6 +299,8 @@ class Incident(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True, verbose_name='Updated At'
     )
+
+    objects = IncidentManager()
 
     def __str__(self):
         return self.title

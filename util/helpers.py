@@ -3,26 +3,30 @@ from django import forms
 from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
+import datetime
 
 
-def validate_normal_form(field, field_qs, form, request):
+def validate_normal_form(field=None, field_qs=None, form=None, request=None, validation_message=None, success_message=None):
     if not field_qs == None:
         if field_qs.exists():
+            if validation_message == None:
+                validation_message = f"This {field} is already exists! Please try another one."
             form.add_error(
                 field, forms.ValidationError(
-                    f"This {field} is already exists! Please try another one."
+                    validation_message
                 )
             )
             return 0
-    if 'update' in request.path or 'edit' in request.path:
-        dynamic_msg = "Data Updated Successfully !!!"
-    elif 'create' in request.path or 'add' in request.path:
-        dynamic_msg = "Data Created Successfully !!!"
-    else:
-        dynamic_msg = "Data Manipulated Successfully !!!"
+    if success_message == None:
+        if 'update' in request.path or 'edit' in request.path:
+            success_message = "Data Updated Successfully !!!"
+        elif 'create' in request.path or 'add' in request.path:
+            success_message = "Data Created Successfully !!!"
+        else:
+            success_message = "Data Manipulated Successfully !!!"
     messages.add_message(
         request, messages.SUCCESS,
-        dynamic_msg
+        success_message
     )
     return 1
 
@@ -176,3 +180,25 @@ def get_dynamic_fields(field=None, self=None):
 #     for f in sorted(opts.fields + opts.many_to_many):
 #         print(f'{f.name}: {f}')
 #     pass
+
+
+def get_report(context=None, context_name=None, model=None, query=None, date_from_filtered=None, date_to_filtered=None):
+    if not date_from_filtered == "" and date_to_filtered == "":
+        date_to_filtered = datetime.datetime.now()
+    if date_from_filtered == "":
+        date_from_filtered = None
+    if date_to_filtered == "":
+        date_to_filtered = None
+
+    if not query == None and not date_from_filtered == None:
+        context['selected_object_list'] = model.objects.search(
+            query).filter(created_at__range=(date_from_filtered, date_to_filtered)
+                          )
+    elif not query == None and date_from_filtered == None:
+        context['selected_object_list'] = model.objects.search(query)
+    elif query == None and not date_from_filtered == None:
+        context['selected_object_list'] = model.objects.filter(created_at__range=(date_from_filtered, date_to_filtered)
+                                                     )
+    else:
+        context['selected_object_list'] = model.objects.all()
+    return context

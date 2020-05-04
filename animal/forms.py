@@ -1,6 +1,6 @@
 from util.helpers import simple_form_widget, validate_chars
 from .models import (
-    Species, HealthPoint, Animal
+    Species, HealthPoint, Animal, AnimalCage
 )
 from django import forms
 import datetime
@@ -88,7 +88,7 @@ class AnimalForm(forms.ModelForm):
         model = Animal
         fields = [
             'name', 'species', 'animal_type', 'colour', 'weight', 'dob', 'country',
-            'image', 'health_point', 'cage'
+            'image', 'health_point', #'cage'
         ]
 
     def clean_dob(self):
@@ -99,3 +99,11 @@ class AnimalForm(forms.ModelForm):
                 raise forms.ValidationError(
                     "Please enter valid Date of Birth. Date cannot be greater than today!")
         return dob
+
+
+class AnimalCageForm(forms.ModelForm):
+    class Meta:
+        model = AnimalCage
+        fields = [
+            'cage', 'animal'
+        ]
