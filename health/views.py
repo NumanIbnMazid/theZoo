@@ -11,6 +11,7 @@ from .forms import (
 # ------------------- Medicine -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class MedicineCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = MedicineForm
@@ -46,6 +47,7 @@ class MedicineCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class MedicineUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = MedicineForm
@@ -92,6 +94,7 @@ def delete_medicine(request):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class DiseaseCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = DiseaseForm
@@ -128,6 +131,7 @@ class DiseaseCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class DiseaseUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = DiseaseForm
@@ -174,6 +178,7 @@ def delete_disease(request):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class AnimalTreatmentCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = AnimalTreatmentForm
@@ -206,6 +211,7 @@ class AnimalTreatmentCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class AnimalTreatmentUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = AnimalTreatmentForm

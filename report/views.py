@@ -7,8 +7,11 @@ from maintenance.models import Cage, Incident, Equipment, EquipmentSet, Maintena
 from django.views.generic import TemplateView
 import datetime
 from util.helpers import get_report
+from util.view_imports import *
 
 
+@method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class ReportTemplateView(TemplateView):
     template_name = "snippets/reports/reports.html"
 

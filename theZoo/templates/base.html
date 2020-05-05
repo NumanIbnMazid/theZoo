@@ -1,3 +1,12 @@
+{% load tags %}
+
+{% if request.user.is_authenticated %}
+{% get_superuser as superuser %}
+{% get_high_level_staff as high_level_staff %}
+{% get_mid_level_staff as mid_level_staff %}
+{% get_low_level_staff as low_level_staff %}
+{% endif %}
+
 <!DOCTYPE html>
 <html lang="en">
 

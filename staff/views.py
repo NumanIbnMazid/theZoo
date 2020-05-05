@@ -75,6 +75,8 @@ class StaffUpdateView(UpdateView):
     def form_valid(self, form):
         email = form.instance.email
         username = form.instance.username
+        if self.request.user.is_superuser:
+            form.instance.role = "High Level"
         field_qs = Staff.objects.filter(
             email__iexact=email
         ).exclude(id=self.get_object().id)
@@ -127,6 +129,8 @@ class AdminStaffUpdateView(UpdateView):
         return None
 
     def form_valid(self, form):
+        if self.request.user.is_superuser:
+            form.instance.role = "High Level"
         messages.add_message(
             self.request, messages.SUCCESS,
             "Updated successfully!"

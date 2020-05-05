@@ -11,24 +11,28 @@ from django.urls import reverse
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django import forms
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.db.models import Q
 import datetime
 from util.helpers import (
     validate_normal_form, simple_context_data, get_simple_object, delete_simple_object
 )
+from staff.models import Staff
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 # Custom Decorators Starts
 from accounts.decorators import (
-    is_superuser_required
+    is_superuser_required, high_level_staff_required, mid_level_staff_required, low_level_staff_required
 )
-decorators = [login_required, is_superuser_required]
+# decorators = [
+#     login_required, is_superuser_required
+# ]
 
 
 # ------------------- Species -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class SpeciesCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = SpeciesForm
@@ -62,8 +66,25 @@ class SpeciesCreateView(CreateView):
             namespace='species'
         )
 
+    def user_passes_test(self, request):
+        user = request.user
+        staff = Staff.objects.filter(user=user).first()
+        if staff.role in ["Mid Level", "High Level"] or staff.user.is_superuser:
+            return True
+        return False
+
+    def dispatch(self, request, *args, **kwargs):
+        instance_user = self.request.user
+        if not self.user_passes_test(request):
+            messages.add_message(self.request, messages.ERROR,
+                                    "You are not allowed !"
+                                )
+            return HttpResponseRedirect(reverse('home'))
+        return super(SpeciesCreateView, self).dispatch(request, *args, **kwargs)
+
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class SpeciesUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = SpeciesForm
@@ -110,6 +131,7 @@ def delete_species(request):
 # ------------------- HealthPoint -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class HealthPointCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = HealthPointForm
@@ -145,6 +167,7 @@ class HealthPointCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class HealthPointUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = HealthPointForm
@@ -191,6 +214,7 @@ def delete_health_point(request):
 # ------------------- Animal -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class AnimalCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = AnimalForm
@@ -227,6 +251,7 @@ class AnimalCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class AnimalUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = AnimalForm
@@ -273,6 +298,7 @@ def delete_animal(request):
 # ------------------- AnimalCage -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class AnimalCageCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = AnimalCageForm
@@ -308,6 +334,7 @@ class AnimalCageCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class AnimalCageUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = AnimalCageForm

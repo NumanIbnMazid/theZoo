@@ -11,6 +11,7 @@
 {% block content %}
 
 <div class="row">
+    {% if mid_level_staff %}
     <div class="{% if fields_count > 7 %}col-md-12{% else %}col-md-6{% endif %} align-items-center mb-4">
         <!-- general form elements -->
         <div class="card card-primary">
@@ -40,6 +41,7 @@
         </div>
         <!-- /.card -->
     </div>
+    {% endif %}
 
     {% if not list_objects == None %}
     <div class="{% if fields_count > 7 %}col-md-12{% else %}col-md-6{% endif %} align-items-center">

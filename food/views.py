@@ -6,6 +6,7 @@ from util.view_imports import *
 # ------------------- Food -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class FoodCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = FoodForm
@@ -41,6 +42,7 @@ class FoodCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class FoodUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = FoodForm
@@ -86,6 +88,7 @@ def delete_food(request):
 # ------------------- AnimalFood -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class AnimalFoodCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = AnimalFoodForm
@@ -118,6 +121,7 @@ class AnimalFoodCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class AnimalFoodUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = AnimalFoodForm

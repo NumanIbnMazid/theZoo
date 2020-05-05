@@ -20,7 +20,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 # Custom Decorators Starts
 from accounts.decorators import (
-    is_superuser_required
+    is_superuser_required, high_level_staff_required, mid_level_staff_required, low_level_staff_required
 )
 decorators = [login_required, is_superuser_required]
 
@@ -28,6 +28,7 @@ decorators = [login_required, is_superuser_required]
 # ------------------- Equipment -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class EquipmentCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = EquipmentForm
@@ -63,6 +64,7 @@ class EquipmentCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class EquipmentUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = EquipmentForm
@@ -109,6 +111,7 @@ def delete_equipment(request):
 # ------------------- Equipment Set -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class EquipmentSetCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = EquipmentSetForm
@@ -144,6 +147,7 @@ class EquipmentSetCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class EquipmentSetUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = EquipmentSetForm
@@ -191,6 +195,7 @@ def delete_equipment_set(request):
 # ------------------- Cage -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class CageCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = CageForm
@@ -226,6 +231,7 @@ class CageCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(high_level_staff_required, name='dispatch')
 class CageUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = CageForm
@@ -272,6 +278,7 @@ def delete_cage(request):
 # ------------------- Maintenance -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class MaintenanceCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = MaintenanceForm
@@ -359,6 +366,7 @@ class MaintenanceCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class MaintenanceUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = MaintenanceForm
@@ -437,6 +445,7 @@ def delete_maintenance(request):
 # ------------------- Incident -------------------
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class IncidentCreateView(CreateView):
     template_name = 'snippets/manage.html'
     form_class = IncidentForm
@@ -472,6 +481,7 @@ class IncidentCreateView(CreateView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(mid_level_staff_required, name='dispatch')
 class IncidentUpdateView(UpdateView):
     template_name = 'snippets/manage.html'
     form_class = IncidentForm

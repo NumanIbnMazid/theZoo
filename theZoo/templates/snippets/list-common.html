@@ -10,7 +10,9 @@
                 <th>{{ value|title }}</th>
                 {% endif %}
                 {% endfor %}
+                {% if mid_level_staff %}
                 <th>Action</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -47,6 +49,8 @@
 
                 {% endfor %}
 
+                {% if mid_level_staff %}
+
                 <td>
                     <a href="{% url update_url id=object.id %}" class="btn btn-primary btn-sm text-deco-none">
                         <span class="">
@@ -60,6 +64,8 @@
                         Delete
                     </button>
                 </td>
+
+                {% endif %}
             </tr>
             {% empty %}
             <tr>
@@ -79,7 +85,9 @@
                 <th>{{ value|title }}</th>
                 {% endif %}
                 {% endfor %}
+                {% if mid_level_staff %}
                 <th>Action</th>
+                {% endif %}
             </tr>
         </tfoot>
     </table>

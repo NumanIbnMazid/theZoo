@@ -145,7 +145,12 @@ def create_or_update_user_staff(sender, instance, created, **kwargs):
                 user=instance, role=role,
             )
         except:
-            Staff.objects.create(
-                user=instance
-            )
+            if instance.is_superuser:
+                Staff.objects.create(
+                    user=instance, role="High Level"
+                )
+            else:
+                Staff.objects.create(
+                    user=instance
+                )
     instance.user_staff.save()

@@ -14,6 +14,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 # Custom Decorators Starts
 from accounts.decorators import (
-    is_superuser_required
+    is_superuser_required, high_level_staff_required, mid_level_staff_required, low_level_staff_required
 )
 decorators = [login_required, is_superuser_required]
