@@ -13,12 +13,14 @@
     </a>
     <!-- Navbar Right Menu-->
     <ul class="app-nav">
-        <li class="app-search">
+        <!-- <li class="app-search">
             <input class="app-search__input" type="search" placeholder="Search">
             <button class="app-search__button"><i class="fa fa-search"></i></button>
-        </li>
+        </li> -->
 
+        {% comment %}
         {% include 'components/notifications.html' %}
+        {% endcomment %}
 
         {% if request.user.is_authenticated %}
 
@@ -43,12 +45,15 @@
 
         {% else %}
 
+        {% comment %}
         <li class="nav-item">
             <a href="{{ signup_url }}" class="btn btn-info m-2">
                 <i class="fa fa-user-plus"></i>
                 Signup
             </a>
         </li>
+        {% endcomment %}
+        
         <li class="nav-item">
             <a href="{{ login_url }}" class="btn btn-info m-2">
                 <i class="fa fa-sign-in-alt"></i>

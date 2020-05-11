@@ -27,6 +27,7 @@
     {% include 'components/sidebar.html' %}
 
     <main class="app-content">
+        {% if request.user.is_authenticated %}
         <div class="app-title">
             <div>
                 <h4>
@@ -43,6 +44,7 @@
                 </li>
             </ul>
         </div>
+        {% endif %}
 
         {% include 'snippets/messages.html' %}
 

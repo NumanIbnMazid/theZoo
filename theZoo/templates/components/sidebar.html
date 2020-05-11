@@ -2,6 +2,7 @@
 <!-- Sidebar menu-->
 <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
 <aside class="app-sidebar">
+	{% if request.user.is_authenticated %}
 	<div class="app-sidebar__user">
 		<img class="app-sidebar__user-avatar" style="width: 50px; height: 50px;" {% if request.user.user_staff.image %}
 			src="{{ request.user.user_staff.image.url }}" {% else %} src="{% static 'images/icon/avatar.png' %}"
@@ -15,6 +16,8 @@
 			</p>
 		</div>
 	</div>
+	{% endif %}
+	{% if request.user.is_authenticated %}
 	<ul class="app-menu">
 		<li>
 			<a class="app-menu__item" href="{% url 'home' %}">
@@ -218,6 +221,7 @@
 		</li>
 		{% endif %}
 	</ul>
+	{% endif %}
 </aside>
 
 {% block extra_js %}
